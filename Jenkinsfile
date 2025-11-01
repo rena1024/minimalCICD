@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'ubuntu-build'
-            args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/local/bin/docker:/usr/local/bin/docker'
         }
     }
     options {
