@@ -8,6 +8,10 @@ pipeline {
     options {
         skipDefaultCheckout(false)
     }
+    environment {
+        IMAGE = "minimalci/myapp"   // 本地测试时可改为 myapp:local
+        TAG = "${env.BUILD_NUMBER}"
+    }
     stages {
         stage('Checkout') {
             steps {
