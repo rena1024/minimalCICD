@@ -4,7 +4,9 @@ pipeline {
             image 'ubuntu-build'
         }
     }
-
+    options {
+        skipDefaultCheckout(false)
+    }
     stages {
         stage('Checkout') {
             steps {
