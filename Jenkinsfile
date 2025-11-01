@@ -2,6 +2,7 @@ pipeline {
     agent {
         docker {
             image 'ubuntu-build'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
         }
     }
     options {
@@ -10,7 +11,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                echo "Checking out repository..."
                 checkout scm
+                sh 'pwd && ls -la'
             }
         }
 
