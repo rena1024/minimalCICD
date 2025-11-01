@@ -1,13 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'ubuntu-build'
-            args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/local/bin/docker:/usr/local/bin/docker'
-        }
-    }
-    options {
-        skipDefaultCheckout(false)
-    }
+    agent any
     environment {
         IMAGE = "minimalci/myapp"   // 本地测试时可改为 myapp:local
         TAG = "${env.BUILD_NUMBER}"
@@ -22,21 +14,31 @@ pipeline {
         }
 
         stage('Build (cmake)') {
-            steps {
-                sh 'cmake -S . -B build && cmake --build build --config Release'
+            agent {
+                docker {
+                    image 'ubuntu-build'
+                    // args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/local/bin/docker:/usr/local/bin/docker'
+                }
             }
-        }
-
-        stage('Run Tests') {
+            // options {
+            //     skipDefaultCheckout(false)
+            // }
             steps {
-                sh 'ctest --test-dir build --output-on-failure || true'
-                // 允许失败会标记为失败；如果你想中断流水线则删掉 "|| true"
+                sh '''
+                  echo "🚧 Building project in ubuntu-build container..."
+                  cmake -S . -B build && cmake --build build --config Release
+                  echo "🧪 Running tests..."
+                  ctest --test-dir build --output-on-failure || true
+                '''
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE}:${TAG} ."
+                sh '''
+                  echo "🐳 Building final Docker image..."
+                  docker build -t ${IMAGE}:${TAG} .
+                '''
             }
         }
 
