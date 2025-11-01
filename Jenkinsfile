@@ -1,9 +1,8 @@
 pipeline {
-    agent any
-
-    environment {
-        IMAGE = "minimalci/myapp"   // 本地测试时可改为 myapp:local
-        TAG = "${env.BUILD_NUMBER}"
+    agent {
+        docker {
+            image 'ubuntu-build'
+        }
     }
 
     stages {

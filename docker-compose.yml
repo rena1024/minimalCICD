@@ -1,12 +1,19 @@
 version: '3.8'
 services:
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    # image: my-jenkins:latest
+    container_name: jenkins
+    user: root # 👈 必须用 root，否则没权限访问 docker.sock
+    privileged: true # 👈 让 Jenkins 有更多系统访问能力（比如构建镜像）
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock   # 允许 Jenkins 使用宿主机 Docker
+      - /var/run/docker.sock:/var/run/docker.sock # 允许 Jenkins 使用宿主机 Docker
+      - /usr/local/bin/docker:/usr/local/bin/docker
 volumes:
   jenkins_home:
