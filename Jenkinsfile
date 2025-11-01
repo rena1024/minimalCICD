@@ -62,7 +62,7 @@ pipeline {
                 // 这里示例部署到当前 Jenkins 节点（本地演示）
                 sh '''
                   docker rm -f myapp || true
-                  docker run -d --name myapp -p 8080:8080 ${IMAGE}:${TAG}
+                  docker run -d --name myapp -p 8081:8080 ${IMAGE}:${TAG}
                 '''
             }
         }
