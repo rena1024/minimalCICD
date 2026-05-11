@@ -1,10 +1,23 @@
-# builder stage
 FROM ubuntu:22.04 AS builder
-RUN apt-get update && apt-get install -y build-essential cmake
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# 把 Jenkins 构建好的可执行文件复制进来
-COPY build/myapp /app/myapp
+COPY CMakeLists.txt /app/CMakeLists.txt
+COPY src /app/src
+COPY test /app/test
+
+RUN cmake -S . -B build \
+ && cmake --build build --config Release
+
+FROM ubuntu:22.04
+
+WORKDIR /app
+
+COPY --from=builder /app/build/myapp /app/myapp
 
 CMD ["./myapp"]

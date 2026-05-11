@@ -13,22 +13,21 @@ pipeline {
             }
         }
 
-        stage('Build (cmake)') {
+        stage('Test') {
             agent {
                 docker {
                     image 'ubuntu-build'
                     // args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/local/bin/docker:/usr/local/bin/docker'
                 }
             }
-            // options {
-            //     skipDefaultCheckout(false)
-            // }
             steps {
                 sh '''
-                  echo "🚧 Building project in ubuntu-build container..."
-                  cmake -S . -B build && cmake --build build --config Release
+                  echo "🧪 Building and testing project in ubuntu-build container..."
+                  rm -rf build
+                  cmake -S . -B build
+                  cmake --build build --config Release
                   echo "🧪 Running tests..."
-                  ctest --test-dir build --output-on-failure || true
+                  ctest --test-dir build --output-on-failure
                 '''
             }
         }
