@@ -1,9 +1,4 @@
-FROM ubuntu:22.04 AS builder
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    cmake \
- && rm -rf /var/lib/apt/lists/*
+FROM ubuntu-build AS builder
 
 WORKDIR /app
 
